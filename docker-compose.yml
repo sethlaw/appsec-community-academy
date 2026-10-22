@@ -1,0 +1,22 @@
+services:
+  community-academy:
+    build: .
+    ports:
+      - "8085:80"
+    depends_on:
+      - cadet-academy
+      - officer-academy
+      - commander-academy
+    restart: unless-stopped
+
+  cadet-academy:
+    build: ../appsec-cadet-academy
+    restart: unless-stopped
+
+  officer-academy:
+    build: ../appsec-officer-academy
+    restart: unless-stopped
+
+  commander-academy:
+    build: ../appsec-commander-academy
+    restart: unless-stopped
