@@ -14,6 +14,8 @@ test("publishes all four academy paths", () => {
 test("local gateway proxies all active academies", () => {
   assert.match(nginx, /location \/cadets\//);
   assert.match(nginx, /proxy_pass http:\/\/cadet-academy\//);
+  assert.match(nginx, /location \/navigators\//);
+  assert.match(nginx, /proxy_pass http:\/\/navigator-academy\//);
   assert.match(nginx, /location \/communication-officers\//);
   assert.match(nginx, /proxy_pass http:\/\/officer-academy\//);
   assert.match(nginx, /location \/commanders\//);
@@ -22,4 +24,9 @@ test("local gateway proxies all active academies", () => {
 
 test("landing page provides descriptive image text", () => {
   assert.match(html, /alt="The four academy ranks:/);
+});
+
+test("all four academy cards are open", () => {
+  assert.equal((html.match(/Enrollment open/g) ?? []).length, 4);
+  assert.doesNotMatch(html, /Curriculum in development/);
 });

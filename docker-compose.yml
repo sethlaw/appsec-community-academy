@@ -5,12 +5,17 @@ services:
       - "8085:80"
     depends_on:
       - cadet-academy
+      - navigator-academy
       - officer-academy
       - commander-academy
     restart: unless-stopped
 
   cadet-academy:
     build: ../appsec-cadet-academy
+    restart: unless-stopped
+
+  navigator-academy:
+    build: ../SaintCon-AppSec-Dev-2026
     restart: unless-stopped
 
   officer-academy:

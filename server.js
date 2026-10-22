@@ -7,6 +7,7 @@ const root = new URL(".", import.meta.url).pathname;
 const types = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".png": "image/png", ".woff2": "font/woff2" };
 const proxies = [
   { prefix: "/cadets", origin: process.env.CADET_ORIGIN || "http://127.0.0.1:8086" },
+  { prefix: "/navigators", origin: process.env.NAVIGATOR_ORIGIN || "http://127.0.0.1:8089" },
   { prefix: "/communication-officers", origin: process.env.OFFICER_ORIGIN || "http://127.0.0.1:8087" },
   { prefix: "/commanders", origin: process.env.COMMANDER_ORIGIN || "http://127.0.0.1:8088" }
 ];
