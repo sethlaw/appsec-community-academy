@@ -22,6 +22,13 @@ test("local gateway proxies all active academies", () => {
   assert.match(nginx, /proxy_pass http:\/\/commander-academy\//);
 });
 
+test("publishes and proxies the aggregate activity tracker", () => {
+  assert.match(html, /href=["']https:\/\/appsec\.community\/tracker\/["']/);
+  assert.match(nginx, /location \/tracker\//);
+  assert.match(nginx, /location \/api\//);
+  assert.match(nginx, /proxy_pass http:\/\/community-tracker/);
+});
+
 test("landing page provides descriptive image text", () => {
   assert.match(html, /alt="The four academy ranks:/);
 });

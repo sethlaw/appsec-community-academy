@@ -1,0 +1,8 @@
+www.appsec.community {
+	redir https://appsec.community{uri} permanent
+}
+
+appsec.community {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:8085
+}

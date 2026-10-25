@@ -9,23 +9,25 @@ const proxies = [
   { prefix: "/cadets", origin: process.env.CADET_ORIGIN || "http://127.0.0.1:8086" },
   { prefix: "/navigators", origin: process.env.NAVIGATOR_ORIGIN || "http://127.0.0.1:8089" },
   { prefix: "/communication-officers", origin: process.env.OFFICER_ORIGIN || "http://127.0.0.1:8087" },
-  { prefix: "/commanders", origin: process.env.COMMANDER_ORIGIN || "http://127.0.0.1:8088" }
+  { prefix: "/commanders", origin: process.env.COMMANDER_ORIGIN || "http://127.0.0.1:8088" },
+  { prefix: "/tracker", origin: process.env.TRACKER_ORIGIN || "http://127.0.0.1:8090", stripPrefix: false, preserveHost: true },
+  { prefix: "/api", origin: process.env.TRACKER_ORIGIN || "http://127.0.0.1:8090", stripPrefix: false, preserveHost: true }
 ];
 
 function proxy(request, response, route, url) {
   const target = new URL(route.origin);
-  const forwardedPath = url.pathname.slice(route.prefix.length) || "/";
+  const forwardedPath = route.stripPrefix === false ? url.pathname : (url.pathname.slice(route.prefix.length) || "/");
   const upstream = httpRequest({
     hostname: target.hostname,
     port: target.port || 80,
     method: request.method,
     path: `${forwardedPath}${url.search}`,
-    headers: { ...request.headers, host: target.host, "x-forwarded-prefix": route.prefix }
+    headers: { ...request.headers, host: route.preserveHost ? request.headers.host : target.host, "x-forwarded-prefix": route.prefix }
   }, (upstreamResponse) => {
     response.writeHead(upstreamResponse.statusCode || 502, upstreamResponse.headers);
     upstreamResponse.pipe(response);
   });
-  upstream.on("error", () => response.writeHead(502, { "Content-Type": "text/plain; charset=utf-8" }).end("Academy path is offline. Start the linked academy and try again."));
+  upstream.on("error", () => response.writeHead(502, { "Content-Type": "text/plain; charset=utf-8" }).end("Community service is offline. Start the linked service and try again."));
   request.pipe(upstream);
 }
 
@@ -33,7 +35,7 @@ createServer((request, response) => {
   const url = new URL(request.url, "http://localhost");
   const route = proxies.find(({ prefix }) => url.pathname === prefix || url.pathname.startsWith(`${prefix}/`));
   if (route) {
-    if (url.pathname === route.prefix) {
+    if (url.pathname === route.prefix && route.prefix !== "/api") {
       response.writeHead(301, { Location: `${route.prefix}/${url.search}` }).end();
       return;
     }

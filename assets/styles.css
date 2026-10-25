@@ -102,6 +102,16 @@ figcaption { padding: .7rem .25rem .15rem; color: var(--ink); font-size: .55rem;
 
 footer { min-height: 56px; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1rem clamp(1rem,4vw,4rem); border-top: 1px solid var(--line); color: #708993; font-size: .57rem; }
 
+/* Temporary public pre-launch mode. Remove the class from <body> to restore the full portal. */
+.prelaunch > .skip-link,
+.prelaunch > .topbar,
+.prelaunch .hero,
+.prelaunch .paths,
+.prelaunch .inline-link,
+.prelaunch > footer { display: none; }
+.prelaunch main { min-height: 100svh; display: grid; align-items: center; }
+.prelaunch .rank-briefing { min-height: 100svh; margin: 0 auto; padding-block: clamp(2rem,6vw,5rem); }
+
 @media (max-width: 1040px) {
   .path-grid { grid-template-columns: repeat(2,1fr); }
   .path-card:nth-child(2) { border-right: 0; }

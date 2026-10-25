@@ -2,12 +2,15 @@ services:
   community-academy:
     build: .
     ports:
-      - "8085:80"
+      # The public TLS proxy runs on the host. Keep the Compose gateway off the
+      # public interface so Docker cannot bypass the host firewall.
+      - "127.0.0.1:8085:80"
     depends_on:
       - cadet-academy
       - navigator-academy
       - officer-academy
       - commander-academy
+      - community-tracker
     restart: unless-stopped
 
   cadet-academy:
@@ -25,3 +28,14 @@ services:
   commander-academy:
     build: ../appsec-commander-academy
     restart: unless-stopped
+
+  community-tracker:
+    build: ../appsec-community-tracker
+    environment:
+      RETENTION_DAYS: "90"
+    volumes:
+      - tracker-data:/data
+    restart: unless-stopped
+
+volumes:
+  tracker-data:
