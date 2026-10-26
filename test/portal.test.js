@@ -4,6 +4,7 @@ import { readFile } from "node:fs/promises";
 
 const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
 const nginx = await readFile(new URL("../nginx.conf", import.meta.url), "utf8");
+const portalMode = await readFile(new URL("../js/portal-mode.js", import.meta.url), "utf8");
 
 test("publishes all four academy paths", () => {
   for (const route of ["/cadets/", "/navigators/", "/communication-officers/", "/commanders/"]) {
@@ -36,4 +37,13 @@ test("landing page provides descriptive image text", () => {
 test("all four academy cards are open", () => {
   assert.equal((html.match(/Enrollment open/g) ?? []).length, 4);
   assert.doesNotMatch(html, /Curriculum in development/);
+});
+
+test("reveals the full academy directory only on loopback hosts", () => {
+  assert.match(html, /<html[^>]+class=["']prelaunch["']/);
+  assert.match(html, /<script src=["']\/js\/portal-mode\.js["']><\/script>/);
+  assert.match(portalMode, /"localhost"/);
+  assert.match(portalMode, /"127\.0\.0\.1"/);
+  assert.match(portalMode, /classList\.remove\("prelaunch"\)/);
+  assert.doesNotMatch(portalMode, /appsec\.community/);
 });
