@@ -14,20 +14,27 @@ test("publishes all four academy paths", () => {
 
 test("local gateway proxies all active academies", () => {
   assert.match(nginx, /location \/cadets\//);
-  assert.match(nginx, /proxy_pass http:\/\/cadet-academy\//);
+  assert.match(nginx, /proxy_pass http:\/\/cadet_academy\//);
   assert.match(nginx, /location \/navigators\//);
-  assert.match(nginx, /proxy_pass http:\/\/navigator-academy\//);
+  assert.match(nginx, /proxy_pass http:\/\/navigator_academy\//);
   assert.match(nginx, /location \/communication-officers\//);
-  assert.match(nginx, /proxy_pass http:\/\/officer-academy\//);
+  assert.match(nginx, /proxy_pass http:\/\/officer_academy\//);
   assert.match(nginx, /location \/commanders\//);
-  assert.match(nginx, /proxy_pass http:\/\/commander-academy\//);
+  assert.match(nginx, /proxy_pass http:\/\/commander_academy\//);
+});
+
+test("gateway dynamically resolves recreated Docker services", () => {
+  assert.match(nginx, /resolver 127\.0\.0\.11 valid=10s ipv6=off/);
+  for (const service of ["cadet-academy:80", "navigator-academy:80", "officer-academy:80", "commander-academy:80", "community-tracker:3000"]) {
+    assert.match(nginx, new RegExp(`server ${service.replace(".", "\\.")} resolve`));
+  }
 });
 
 test("publishes and proxies the aggregate activity tracker", () => {
   assert.match(html, /href=["']https:\/\/appsec\.community\/tracker\/["']/);
   assert.match(nginx, /location \/tracker\//);
   assert.match(nginx, /location \/api\//);
-  assert.match(nginx, /proxy_pass http:\/\/community-tracker/);
+  assert.match(nginx, /proxy_pass http:\/\/community_tracker/);
 });
 
 test("landing page provides descriptive image text", () => {
